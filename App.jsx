@@ -297,8 +297,9 @@ export default function ImpostorGame() {
   const shareLink = async () => {
     const baseUrl = window.location.href.split('?')[0];
     const shareUrl = `${baseUrl}?code=${roomCode}`;
-    const shareText = `¡Únete a mi partida de Impostor! Código: ${roomCode}`;
+    const shareText = `¡Únete a mi partida de Impostor! Código: ${roomCode}\n${shareUrl}`;
 
+    // Intentar Web Share API (móviles)
     if (navigator.share) {
       try {
         await navigator.share({
@@ -306,32 +307,34 @@ export default function ImpostorGame() {
           text: shareText,
           url: shareUrl,
         });
-      } catch (err) { console.log(err); }
-    } else {
-      const textArea = document.createElement("textarea");
-      textArea.value = `${shareText}\n${shareUrl}`;
-      document.body.appendChild(textArea);
-      textArea.select();
-      try {
-        document.execCommand('copy');
-        setShareStatus('copied_link');
-        setTimeout(() => setShareStatus('idle'), 2000);
-      } catch (err) { console.error(err); }
-      document.body.removeChild(textArea);
+        return;
+      } catch (err) {
+        // Si el usuario cancela o falla, continuar con clipboard
+        console.log('Share cancelado, usando clipboard');
+      }
+    }
+
+    // Usar Clipboard API moderna
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setShareStatus('copied_link');
+      setTimeout(() => setShareStatus('idle'), 2000);
+    } catch (err) {
+      // Fallback para navegadores sin soporte
+      console.error('Error copiando:', err);
+      alert(`Copia este enlace:\n\n${shareText}`);
     }
   };
 
-  const copyCodeOnly = () => {
-    const textArea = document.createElement("textarea");
-    textArea.value = roomCode;
-    document.body.appendChild(textArea);
-    textArea.select();
+  const copyCodeOnly = async () => {
     try {
-      document.execCommand('copy');
+      await navigator.clipboard.writeText(roomCode);
       setCodeCopied(true);
       setTimeout(() => setCodeCopied(false), 2000);
-    } catch (err) { console.error(err); }
-    document.body.removeChild(textArea);
+    } catch (err) {
+      console.error('Error copiando código:', err);
+      alert(`Código: ${roomCode}`);
+    }
   };
 
   // --- VISTAS ---

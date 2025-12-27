@@ -1,39 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
-import { 
-  getAuth, 
-  signInAnonymously, 
-  onAuthStateChanged,
-  signInWithCustomToken
+import {
+  getAuth,
+  signInAnonymously,
+  onAuthStateChanged
 } from 'firebase/auth';
-import { 
-  getFirestore, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  updateDoc, 
-  onSnapshot, 
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  onSnapshot,
   serverTimestamp,
-  arrayUnion 
+  arrayUnion
 } from 'firebase/firestore';
 
-// --- ICONOS INTEGRADOS (No requieren instalación externa) ---
-const Icon = ({ children, className, ...props }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>{children}</svg>
+// --- ICONOS (Sin librerías externas para evitar errores) ---
+const Icon = ({ children, className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>
 );
-const Crown = (props) => <Icon {...props}><path d="m2 4 3 12h14l3-12-6 7-4-3-4 3-6-7zm5 16h10"/></Icon>;
-const Skull = (props) => <Icon {...props}><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M8 20v2h8v-2"/><path d="m12.5 17-.5-1-.5 1h1z"/><path d="M16 20a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20"/></Icon>;
-const UserPlus = (props) => <Icon {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></Icon>;
-const Users = (props) => <Icon {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></Icon>;
-const Play = ({ fill, ...props }) => <Icon {...props}><polygon points="5 3 19 12 5 21 5 3" fill={fill}/></Icon>;
-const EyeOff = (props) => <Icon {...props}><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></Icon>;
-const CheckCircle = (props) => <Icon {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></Icon>;
-const Loader2 = (props) => <Icon {...props}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></Icon>;
-const Info = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></Icon>;
-const Share2 = (props) => <Icon {...props}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></Icon>;
-const Copy = (props) => <Icon {...props}><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></Icon>;
-const Check = (props) => <Icon {...props}><polyline points="20 6 9 17 4 12"/></Icon>;
-const RefreshCw = (props) => <Icon {...props}><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></Icon>;
+const Crown = ({ size, className }) => <Icon className={className}><path d="m2 4 3 12h14l3-12-6 7-4-3-4 3-6-7zm5 16h10"/></Icon>;
+const Skull = ({ size, className }) => <Icon className={className}><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M8 20v2h8v-2"/><path d="m12.5 17-.5-1-.5 1h1z"/><path d="M16 20a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20"/></Icon>;
+const UserPlus = ({ size, className }) => <Icon className={className}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></Icon>;
+const Users = ({ size, className }) => <Icon className={className}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></Icon>;
+const Play = ({ size, className, fill }) => <Icon className={className}><polygon points="5 3 19 12 5 21 5 3" fill={fill}/></Icon>;
+const EyeOff = ({ size, className }) => <Icon className={className}><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></Icon>;
+const CheckCircle = ({ size, className }) => <Icon className={className}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></Icon>;
+const Loader2 = ({ className }) => <Icon className={className}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></Icon>;
+const Info = ({ size, className }) => <Icon className={className}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></Icon>;
+const Share2 = ({ size, className }) => <Icon className={className}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></Icon>;
+const Copy = ({ size, className }) => <Icon className={className}><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></Icon>;
+const Check = ({ size, className }) => <Icon className={className}><polyline points="20 6 9 17 4 12"/></Icon>;
+const RefreshCw = ({ size, className }) => <Icon className={className}><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></Icon>;
 
 
 // --- CONFIGURACIÓN FIREBASE ---
@@ -47,25 +46,14 @@ const firebaseConfig = {
   measurementId: "G-T0DRWK2SDS"
 };
 
-// --- INICIALIZACIÓN SEGURA ---
-let app, auth, db;
-const isConfigured = firebaseConfig.apiKey !== "TU_API_KEY_AQUI";
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const appId = 'impostor-game-v1';
 
-if (isConfigured) {
-  try {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
-  } catch (e) {
-    console.error("Error iniciando Firebase:", e);
-  }
-}
-
-const appId = 'impostor-game-v2';
-
-// --- BASE DE DATOS DE PALABRAS ---
+// --- PALABRAS ---
 const WORD_CATEGORIES = {
-  EASY: [ 
+  EASY: [
     { category: 'Animales', words: ['Perro', 'Gato', 'Elefante', 'León', 'Mono', 'Vaca'] },
     { category: 'Comida', words: ['Pizza', 'Helado', 'Manzana', 'Pan', 'Leche'] },
     { category: 'Escuela', words: ['Lápiz', 'Maestra', 'Libro', 'Mochila', 'Recreo'] }
@@ -83,35 +71,11 @@ const WORD_CATEGORIES = {
 };
 
 export default function ImpostorGame() {
-  // --- PANTALLA DE AYUDA SI FALTA CONFIGURACIÓN ---
-  if (!isConfigured || !app) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 text-white p-6 text-center font-sans">
-        <div className="bg-slate-800 p-8 rounded-2xl border-2 border-red-500 max-w-md shadow-2xl">
-          <h1 className="text-2xl font-bold text-red-500 mb-4">¡Casi listo! Falta un paso</h1>
-          <p className="mb-4 text-slate-300">
-            El código está perfecto, pero necesitas conectar tu base de datos Firebase para que los jugadores se vean entre sí.
-          </p>
-          <div className="text-left bg-slate-950 p-4 rounded-lg font-mono text-xs text-green-400 mb-6">
-            1. Ve a Firebase Console<br/>
-            2. Configuración del proyecto &gt; General<br/>
-            3. Baja a "Tus apps" y copia el `const firebaseConfig`<br/>
-            4. Pégalo en el archivo <code>App.jsx</code> (Línea 45)
-          </div>
-          <button onClick={() => window.location.reload()} className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl w-full">
-            Ya lo pegué, recargar página
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // --- LÓGICA DEL JUEGO ---
   const [user, setUser] = useState(null);
   const [playerName, setPlayerName] = useState('');
   const [playerAge, setPlayerAge] = useState(18);
   const [roomCode, setRoomCode] = useState('');
-  const [gameState, setGameState] = useState('MENU'); 
+  const [gameState, setGameState] = useState('MENU');
   const [roomData, setRoomData] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -130,10 +94,9 @@ export default function ImpostorGame() {
 
     const initAuth = async () => {
       try {
-         await signInAnonymously(auth);
+        await signInAnonymously(auth);
       } catch (err) {
         console.error("Auth error", err);
-        setError("Error de autenticación. Verifica la consola.");
       }
     };
     initAuth();
@@ -145,12 +108,12 @@ export default function ImpostorGame() {
     if (!user || !roomCode || gameState === 'MENU') return;
 
     const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', roomCode);
-    
+
     const unsubscribe = onSnapshot(roomRef, (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setRoomData(data);
-        
+
         if (data.status === 'revealing' && gameState === 'LOBBY') setGameState('REVEAL');
         if (data.status === 'playing' && gameState === 'REVEAL') setGameState('PLAYING');
         if (data.status === 'voting' && gameState !== 'VOTING') setGameState('VOTING');
@@ -167,7 +130,7 @@ export default function ImpostorGame() {
       }
     }, (err) => {
       console.error(err);
-      setError("Error de conexión con la sala.");
+      setError("Error de conexión.");
     });
 
     return () => unsubscribe();
@@ -185,10 +148,10 @@ export default function ImpostorGame() {
   const createRoom = async () => {
     if (!playerName.trim()) return setError("¡Pon tu nombre!");
     setLoading(true);
-    
+
     const code = generateRoomCode();
     const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', code);
-    
+
     const playerData = {
       id: user.uid,
       name: playerName,
@@ -202,7 +165,7 @@ export default function ImpostorGame() {
         code,
         hostId: user.uid,
         status: 'lobby',
-        players: [playerData], 
+        players: [playerData],
         createdAt: serverTimestamp(),
         secretWord: '',
         category: '',
@@ -211,8 +174,7 @@ export default function ImpostorGame() {
       setRoomCode(code);
       setGameState('LOBBY');
     } catch (e) {
-      console.error(e);
-      setError("Error al crear. ¿Habilitaste Firestore en modo prueba?");
+      setError("Error al crear. Intenta de nuevo.");
     } finally {
       setLoading(false);
     }
@@ -232,7 +194,7 @@ export default function ImpostorGame() {
         setLoading(false);
         return setError("Sala no encontrada");
       }
-      
+
       const data = snap.data();
       if (data.status !== 'lobby') {
         setLoading(false);
@@ -240,7 +202,7 @@ export default function ImpostorGame() {
       }
 
       const isAlreadyIn = data.players.some(p => p.id === user.uid);
-      
+
       if (isAlreadyIn) {
         setRoomCode(code);
         setGameState('LOBBY');
@@ -256,7 +218,7 @@ export default function ImpostorGame() {
         await updateDoc(roomRef, {
           players: arrayUnion(myPlayerData)
         });
-        
+
         setRoomCode(code);
         setGameState('LOBBY');
       }
@@ -308,7 +270,7 @@ export default function ImpostorGame() {
   const submitVote = async (targetId) => {
     if (hasVoted) return;
     setHasVoted(true);
-    
+
     const newPlayers = roomData.players.map(p => {
       if (p.id === targetId) return { ...p, votes: (p.votes || 0) + 1 };
       return p;
@@ -335,6 +297,7 @@ export default function ImpostorGame() {
      } catch(e) {}
   };
 
+  // --- SHARE FUNCTION ---
   const shareLink = async () => {
     const baseUrl = window.location.href.split('?')[0];
     const shareUrl = `${baseUrl}?code=${roomCode}`;
@@ -388,11 +351,11 @@ export default function ImpostorGame() {
 
           <div className="bg-slate-800 p-8 rounded-3xl shadow-2xl border border-slate-700 space-y-5">
             {error && <div className="bg-red-500/20 text-red-200 p-4 rounded-xl text-center text-sm font-bold border border-red-500/50">{error}</div>}
-            
+
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Tu Nombre</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
                 className="w-full bg-slate-900 text-white p-4 rounded-xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-lg"
@@ -402,8 +365,8 @@ export default function ImpostorGame() {
 
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Tu Edad</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 value={playerAge}
                 onChange={(e) => setPlayerAge(e.target.value)}
                 className="w-full bg-slate-900 text-white p-4 rounded-xl focus:ring-2 focus:ring-red-500 outline-none font-bold text-lg"
@@ -412,25 +375,25 @@ export default function ImpostorGame() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 pt-2">
-              <button 
+              <button
                 onClick={createRoom}
                 disabled={loading}
                 className="w-full bg-red-600 hover:bg-red-500 text-white font-black py-4 rounded-xl shadow-lg active:scale-95 transition-all flex items-center justify-center space-x-2"
               >
-                {loading ? <Loader2 className="animate-spin w-6 h-6" /> : <UserPlus className="w-6 h-6" />}
+                {loading ? <Loader2 className="animate-spin" /> : <UserPlus size={24} />}
                 <span>CREAR SALA</span>
               </button>
-              
+
               <div className="flex space-x-2">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={roomCode}
                   onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                   className="bg-slate-900 text-center text-white p-4 rounded-xl font-mono font-black tracking-widest uppercase text-xl w-32 focus:ring-2 focus:ring-blue-500 outline-none"
                   placeholder="ABCD"
                   maxLength={4}
                 />
-                <button 
+                <button
                   onClick={joinRoom}
                   disabled={loading}
                   className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg active:scale-95 transition-all"
@@ -447,11 +410,11 @@ export default function ImpostorGame() {
 
   if (gameState === 'LOBBY' && roomData) {
     const isHost = roomData.hostId === user.uid;
-    const canStart = roomData.players.length >= 2; 
+    const canStart = roomData.players.length >= 2;
 
     return (
       <div className="min-h-screen bg-slate-900 text-white p-4 flex flex-col font-sans">
-        
+
         {/* ENCABEZADO DE SALA */}
         <div className="bg-slate-800 rounded-2xl p-6 mb-4 shadow-xl border border-slate-700 relative overflow-hidden">
           <div className="flex justify-between items-start relative z-10 mb-4">
@@ -459,26 +422,26 @@ export default function ImpostorGame() {
               <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">CÓDIGO DE SALA</p>
               <div className="flex items-center space-x-3">
                 <h2 className="text-5xl font-mono font-black text-blue-400 tracking-tighter">{roomData.code}</h2>
-                <button 
+                <button
                   onClick={copyCodeOnly}
                   className="bg-slate-700 hover:bg-slate-600 p-2 rounded-lg transition-colors text-slate-300"
                   title="Copiar solo el código"
                 >
-                  {codeCopied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
+                  {codeCopied ? <Check size={20} className="text-green-500" /> : <Copy size={20} />}
                 </button>
               </div>
             </div>
             <div className="text-right">
-               <Users className="inline-block text-slate-500 mb-1 w-6 h-6" />
+               <Users className="inline-block text-slate-500 mb-1" />
                <div className="text-2xl font-bold">{roomData.players.length}</div>
             </div>
           </div>
-          
-          <button 
+
+          <button
             onClick={shareLink}
             className={`w-full flex items-center justify-center space-x-2 py-3 rounded-xl font-bold text-sm transition-all ${shareStatus === 'copied_link' ? 'bg-green-600 text-white' : 'bg-slate-700 hover:bg-slate-600 text-slate-200'}`}
           >
-            {shareStatus === 'copied_link' ? <CheckCircle className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+            {shareStatus === 'copied_link' ? <CheckCircle size={18} /> : <Share2 size={18} />}
             <span>{shareStatus === 'copied_link' ? '¡ENLACE COPIADO!' : 'INVITAR AMIGOS'}</span>
           </button>
         </div>
@@ -493,22 +456,22 @@ export default function ImpostorGame() {
                 </div>
                 <div className="font-bold text-lg leading-tight">{p.name}</div>
               </div>
-              {p.isHost && <Crown className="w-5 h-5 text-yellow-500" />}
+              {p.isHost && <Crown size={20} className="text-yellow-500" />}
             </div>
           ))}
         </div>
 
         {isHost ? (
-          <button 
+          <button
             onClick={startGame}
             disabled={!canStart || loading}
             className={`w-full py-5 rounded-2xl font-black text-xl flex items-center justify-center space-x-2 shadow-xl transition-all ${
-              !canStart 
-                ? 'bg-slate-700 text-slate-500 cursor-not-allowed' 
+              !canStart
+                ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
                 : 'bg-green-500 text-white hover:bg-green-400 active:scale-95'
             }`}
           >
-            {loading ? <Loader2 className="animate-spin w-6 h-6" /> : <Play className="w-6 h-6" fill="currentColor" />}
+            {loading ? <Loader2 className="animate-spin" /> : <Play fill="currentColor" />}
             <span>{!canStart ? 'ESPERANDO JUGADOR...' : 'INICIAR PARTIDA'}</span>
           </button>
         ) : (
@@ -520,7 +483,6 @@ export default function ImpostorGame() {
     );
   }
 
-  // --- VISTAS: JUEGO ---
   if (gameState === 'REVEAL' || gameState === 'PLAYING') {
     const isImpostor = roomData.impostorId === user.uid;
     const isHost = roomData.hostId === user.uid;
@@ -530,8 +492,8 @@ export default function ImpostorGame() {
         {gameState === 'REVEAL' && (
           <div className="text-center w-full max-w-md">
             <h2 className="text-2xl font-bold mb-8 text-slate-300">Tu Identidad Secreta</h2>
-            
-            <div 
+
+            <div
               className={`cursor-pointer transition-all duration-300 transform ${showRole ? 'scale-100' : 'hover:scale-105 active:scale-95'} mb-10`}
               onClick={() => setShowRole(!showRole)}
             >
@@ -539,7 +501,7 @@ export default function ImpostorGame() {
                 <div className={`p-10 rounded-3xl border-4 shadow-2xl relative overflow-hidden ${isImpostor ? 'bg-red-900/90 border-red-500' : 'bg-blue-900/90 border-blue-500'}`}>
                    {isImpostor ? (
                      <>
-                      <Skull className="mx-auto text-red-500 mb-6 drop-shadow-lg w-20 h-20" />
+                      <Skull size={80} className="mx-auto text-red-500 mb-6 drop-shadow-lg" />
                       <h3 className="text-4xl font-black text-red-500 uppercase mb-2 tracking-tighter">IMPOSTOR</h3>
                       <p className="text-red-100 font-medium text-lg">Tu misión: Fingir.</p>
                       <div className="mt-4 bg-red-950/50 p-3 rounded-lg border border-red-500/30">
@@ -549,7 +511,7 @@ export default function ImpostorGame() {
                      </>
                    ) : (
                      <>
-                      <CheckCircle className="mx-auto text-blue-400 mb-6 drop-shadow-lg w-20 h-20" />
+                      <CheckCircle size={80} className="mx-auto text-blue-400 mb-6 drop-shadow-lg" />
                       <h3 className="text-4xl font-black text-blue-400 uppercase mb-2 tracking-tighter">TRIPULANTE</h3>
                       <p className="text-blue-100 font-medium text-lg">La palabra secreta es:</p>
                       <div className="mt-6 bg-white text-slate-900 p-4 rounded-xl shadow-lg transform rotate-1">
@@ -560,14 +522,14 @@ export default function ImpostorGame() {
                 </div>
               ) : (
                 <div className="h-96 w-full rounded-3xl bg-slate-800 border-4 border-slate-600 border-dashed shadow-xl flex flex-col items-center justify-center group">
-                  <EyeOff className="text-slate-500 mb-6 group-hover:text-slate-300 transition-colors w-16 h-16" />
+                  <EyeOff size={64} className="text-slate-500 mb-6 group-hover:text-slate-300 transition-colors" />
                   <span className="text-slate-400 font-bold text-2xl uppercase tracking-widest group-hover:text-white transition-colors">Toca para ver</span>
                 </div>
               )}
             </div>
 
             {isHost ? (
-              <button 
+              <button
                 onClick={startVoting}
                 className="w-full bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-black py-4 rounded-xl shadow-lg active:scale-95 transition-all uppercase tracking-wide"
               >
@@ -584,7 +546,6 @@ export default function ImpostorGame() {
     );
   }
 
-  // --- VISTA: VOTACIÓN ---
   if (gameState === 'VOTING') {
     const isHost = roomData.hostId === user.uid;
     return (
@@ -593,7 +554,7 @@ export default function ImpostorGame() {
           <h2 className="text-3xl font-black text-white mb-1 uppercase tracking-tight">Votación</h2>
           <p className="text-slate-400 text-sm font-medium">Toca a quien quieres expulsar</p>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-3 flex-1 overflow-y-auto content-start pb-4">
           {roomData.players.map((p) => {
              return (
@@ -602,7 +563,7 @@ export default function ImpostorGame() {
                 disabled={hasVoted}
                 onClick={() => submitVote(p.id)}
                 className={`p-4 rounded-2xl border-2 flex flex-col items-center justify-center transition-all aspect-square ${
-                  hasVoted 
+                  hasVoted
                     ? 'border-slate-800 bg-slate-800/50 opacity-40 cursor-not-allowed'
                     : 'border-slate-700 bg-slate-800 hover:border-red-500 hover:bg-slate-750 active:scale-95 active:border-red-500 active:bg-red-900/20'
                 }`}
@@ -611,7 +572,7 @@ export default function ImpostorGame() {
                   {p.name.charAt(0).toUpperCase()}
                 </div>
                 <span className="font-bold truncate w-full text-center text-lg">{p.name}</span>
-                {hasVoted && <CheckCircle className="text-green-500 mt-2 w-4 h-4" />}
+                {hasVoted && <CheckCircle size={16} className="text-green-500 mt-2" />}
               </button>
              );
           })}
@@ -625,7 +586,7 @@ export default function ImpostorGame() {
 
         {isHost && (
           <div className="mt-2">
-             <button 
+             <button
               onClick={endVoting}
               className="w-full bg-red-600 hover:bg-red-500 text-white font-black py-4 rounded-xl shadow-lg active:scale-95 transition-all uppercase"
             >
@@ -637,7 +598,6 @@ export default function ImpostorGame() {
     );
   }
 
-  // --- VISTA: RESULTADOS ---
   if (gameState === 'RESULTS') {
     const isHost = roomData.hostId === user.uid;
     const sortedPlayers = [...roomData.players].sort((a, b) => (b.votes || 0) - (a.votes || 0));
@@ -650,9 +610,9 @@ export default function ImpostorGame() {
         <div className="mb-10 w-full">
           <h2 className="text-xs text-slate-500 uppercase tracking-widest font-bold mb-4">El expulsado fue</h2>
           <div className="text-5xl font-black text-white mb-6 drop-shadow-xl">{mostVoted.name}</div>
-          
+
           <div className={`inline-flex items-center space-x-2 px-8 py-3 rounded-full font-black text-lg uppercase shadow-lg ${wasImpostor ? 'bg-green-500 text-slate-900' : 'bg-red-500 text-white'}`}>
-             {wasImpostor ? <CheckCircle className="w-6 h-6" /> : <Skull className="w-6 h-6" />}
+             {wasImpostor ? <CheckCircle size={24} /> : <Skull size={24} />}
              <span>{wasImpostor ? "ERA EL IMPOSTOR" : "INOCENTE"}</span>
           </div>
         </div>
@@ -671,11 +631,11 @@ export default function ImpostorGame() {
         </div>
 
         {isHost ? (
-          <button 
+          <button
              onClick={backToLobby}
              className="w-full max-w-sm bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-xl shadow-lg active:scale-95 transition-all uppercase"
            >
-             <RefreshCw className="inline mr-2 w-5 h-5"/>
+             <RefreshCw className="inline mr-2"/>
              Jugar otra vez
            </button>
         ) : (

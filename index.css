@@ -1,33 +1,23 @@
 /* ========================================
-   IMPOSTOR GAME - Estilos Globales
+   IMPOSTOR GAME - Estilos Base
    ======================================== */
 
-/* Variables y Reset */
 :root {
-  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
-  line-height: 1.4;
-  font-weight: 500;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
   color-scheme: dark;
-  color: #ffffff;
-
-  --bg-dark: #0a0a0f;
-  --color-red: #ff3b3b;
-  --color-red-bright: #ff5555;
-  --color-blue: #4d9fff;
-  --color-green: #00d26a;
-  --color-purple: #a855f7;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 * {
   box-sizing: border-box;
 }
 
-/* Fondo sólido oscuro */
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: var(--bg-dark);
-  overflow-x: hidden;
+  background-color: #0f172a;
 }
 
 #root {
@@ -35,238 +25,40 @@ body {
   min-height: 100vh;
 }
 
-/* ========================================
-   BOTONES - Super llamativos
-   ======================================== */
-
+/* Transiciones suaves en botones */
 button {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-/* Efecto shine animado */
-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
-  transition: left 0.5s ease;
+button:active {
+  transform: scale(0.97);
 }
 
-button:hover::before {
-  left: 100%;
-}
-
-/* Botones ROJOS - Acción principal */
-button[class*="bg-red"] {
-  background: linear-gradient(135deg, #ff3b3b 0%, #ff0000 100%) !important;
-  border: 2px solid #ff5555 !important;
-  box-shadow:
-    0 4px 15px rgba(255, 59, 59, 0.4),
-    0 0 0 0 rgba(255, 59, 59, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-button[class*="bg-red"]:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow:
-    0 8px 30px rgba(255, 59, 59, 0.6),
-    0 0 50px rgba(255, 59, 59, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  filter: brightness(1.1);
-}
-
-button[class*="bg-red"]:active {
-  transform: translateY(0) scale(0.98);
-}
-
-/* Botones AZULES */
-button[class*="bg-blue"] {
-  background: linear-gradient(135deg, #4d9fff 0%, #0066ff 100%) !important;
-  border: 2px solid #66b3ff !important;
-  box-shadow:
-    0 4px 15px rgba(77, 159, 255, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-button[class*="bg-blue"]:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow:
-    0 8px 30px rgba(77, 159, 255, 0.6),
-    0 0 50px rgba(77, 159, 255, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  filter: brightness(1.1);
-}
-
-/* Botones VERDES */
-button[class*="bg-green"] {
-  background: linear-gradient(135deg, #00d26a 0%, #00a854 100%) !important;
-  border: 2px solid #33ff99 !important;
-  box-shadow:
-    0 4px 15px rgba(0, 210, 106, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-button[class*="bg-green"]:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow:
-    0 8px 30px rgba(0, 210, 106, 0.6),
-    0 0 50px rgba(0, 210, 106, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  filter: brightness(1.1);
-}
-
-/* Botones AMARILLOS */
-button[class*="bg-yellow"] {
-  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
-  border: 2px solid #ffd54f !important;
-  box-shadow:
-    0 4px 15px rgba(255, 193, 7, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  color: #000 !important;
-}
-
-button[class*="bg-yellow"]:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow:
-    0 8px 30px rgba(255, 193, 7, 0.6),
-    0 0 50px rgba(255, 193, 7, 0.4);
-  filter: brightness(1.1);
-}
-
-/* Botones secundarios (slate) */
-button[class*="bg-slate-7"] {
-  background: linear-gradient(135deg, #3d4a5c 0%, #2d3748 100%) !important;
-  border: 1px solid #4a5568 !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-button[class*="bg-slate-7"]:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-  border-color: #718096 !important;
-}
-
-/* ========================================
-   INPUTS - Estilo moderno
-   ======================================== */
-
+/* Inputs */
 input {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  border: 2px solid transparent !important;
+  transition: all 0.2s ease;
 }
 
 input:focus {
-  border-color: var(--color-red) !important;
-  box-shadow: 0 0 20px rgba(255, 59, 59, 0.3);
   outline: none;
 }
 
-/* ========================================
-   CARDS - Estilo limpio
-   ======================================== */
-
-div[class*="bg-slate-800"] {
-  background: linear-gradient(145deg, #1a1a2e 0%, #16161d 100%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-}
-
-/* ========================================
-   TÍTULOS
-   ======================================== */
-
-h1, h2, h3 {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 900;
-  letter-spacing: -0.5px;
-}
-
-/* Título principal rojo con glow */
-h1[class*="text-red"] {
-  color: var(--color-red) !important;
-  text-shadow:
-    0 0 10px rgba(255, 59, 59, 0.5),
-    0 0 30px rgba(255, 59, 59, 0.3),
-    0 0 50px rgba(255, 59, 59, 0.2);
-  -webkit-text-fill-color: var(--color-red);
-}
-
-/* ========================================
-   ANIMACIONES
-   ======================================== */
-
-@keyframes pulse-glow {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.2); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* ========================================
-   SCROLLBAR
-   ======================================== */
-
+/* Scrollbar minimalista */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-dark);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-red);
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
 }
 
-/* ========================================
-   SELECCIÓN
-   ======================================== */
-
+/* Selección de texto */
 ::selection {
-  background: var(--color-red);
+  background: rgba(239, 68, 68, 0.4);
   color: white;
-}
-
-/* ========================================
-   TEXTOS GENERALES
-   ======================================== */
-
-p, span, label, div {
-  font-family: 'Outfit', sans-serif;
-}
-
-/* Código de sala grande */
-h2[class*="font-mono"] {
-  font-family: 'Outfit', monospace !important;
-  font-weight: 900 !important;
-  letter-spacing: 4px;
 }

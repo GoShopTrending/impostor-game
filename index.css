@@ -4,178 +4,224 @@
 
 /* Variables y Reset */
 :root {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  line-height: 1.4;
+  font-weight: 500;
   color-scheme: dark;
-  color: rgba(255, 255, 255, 0.95);
+  color: #ffffff;
 
-  --color-bg: #0f172a;
-  --color-red: #ef4444;
-  --color-blue: #3b82f6;
-  --glow-red: 0 0 40px rgba(239, 68, 68, 0.4);
-  --glow-blue: 0 0 40px rgba(59, 130, 246, 0.4);
+  --bg-dark: #0a0a0f;
+  --color-red: #ff3b3b;
+  --color-red-bright: #ff5555;
+  --color-blue: #4d9fff;
+  --color-green: #00d26a;
+  --color-purple: #a855f7;
 }
 
 * {
   box-sizing: border-box;
 }
 
-/* Fondo animado con gradiente */
+/* Fondo sólido oscuro */
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse at 20% 20%, rgba(239, 68, 68, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 60%),
-    linear-gradient(180deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-  background-attachment: fixed;
+  background-color: var(--bg-dark);
   overflow-x: hidden;
 }
 
-/* Efecto de partículas flotantes (pseudo-elementos) */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.3), transparent),
-    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.2), transparent),
-    radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.4), transparent),
-    radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.2), transparent),
-    radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.3), transparent);
-  background-size: 200px 200px;
-  animation: floatParticles 20s linear infinite;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.5;
-}
-
-@keyframes floatParticles {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-200px); }
-}
-
 #root {
-  position: relative;
-  z-index: 1;
   width: 100%;
   min-height: 100vh;
 }
 
 /* ========================================
-   BOTONES - Efectos especiales
+   BOTONES - Super llamativos
    ======================================== */
 
 button {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   position: relative;
   overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  cursor: pointer;
 }
 
-/* Efecto ripple en botones */
-button::after {
+/* Efecto shine animado */
+button::before {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.4s, height 0.4s;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
 }
 
-button:active::after {
-  width: 300px;
-  height: 300px;
+button:hover::before {
+  left: 100%;
 }
 
-/* Glow en hover para botones rojos */
+/* Botones ROJOS - Acción principal */
+button[class*="bg-red"] {
+  background: linear-gradient(135deg, #ff3b3b 0%, #ff0000 100%) !important;
+  border: 2px solid #ff5555 !important;
+  box-shadow:
+    0 4px 15px rgba(255, 59, 59, 0.4),
+    0 0 0 0 rgba(255, 59, 59, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
 button[class*="bg-red"]:hover {
-  box-shadow: var(--glow-red);
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow:
+    0 8px 30px rgba(255, 59, 59, 0.6),
+    0 0 50px rgba(255, 59, 59, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  filter: brightness(1.1);
 }
 
-/* Glow en hover para botones azules */
+button[class*="bg-red"]:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Botones AZULES */
+button[class*="bg-blue"] {
+  background: linear-gradient(135deg, #4d9fff 0%, #0066ff 100%) !important;
+  border: 2px solid #66b3ff !important;
+  box-shadow:
+    0 4px 15px rgba(77, 159, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
 button[class*="bg-blue"]:hover {
-  box-shadow: var(--glow-blue);
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow:
+    0 8px 30px rgba(77, 159, 255, 0.6),
+    0 0 50px rgba(77, 159, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  filter: brightness(1.1);
 }
 
-/* Glow en hover para botones verdes */
+/* Botones VERDES */
+button[class*="bg-green"] {
+  background: linear-gradient(135deg, #00d26a 0%, #00a854 100%) !important;
+  border: 2px solid #33ff99 !important;
+  box-shadow:
+    0 4px 15px rgba(0, 210, 106, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
 button[class*="bg-green"]:hover {
-  box-shadow: 0 0 40px rgba(34, 197, 94, 0.4);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow:
+    0 8px 30px rgba(0, 210, 106, 0.6),
+    0 0 50px rgba(0, 210, 106, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  filter: brightness(1.1);
+}
+
+/* Botones AMARILLOS */
+button[class*="bg-yellow"] {
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
+  border: 2px solid #ffd54f !important;
+  box-shadow:
+    0 4px 15px rgba(255, 193, 7, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  color: #000 !important;
+}
+
+button[class*="bg-yellow"]:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow:
+    0 8px 30px rgba(255, 193, 7, 0.6),
+    0 0 50px rgba(255, 193, 7, 0.4);
+  filter: brightness(1.1);
+}
+
+/* Botones secundarios (slate) */
+button[class*="bg-slate-7"] {
+  background: linear-gradient(135deg, #3d4a5c 0%, #2d3748 100%) !important;
+  border: 1px solid #4a5568 !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+button[class*="bg-slate-7"]:hover {
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  border-color: #718096 !important;
 }
 
 /* ========================================
-   INPUTS - Estilo mejorado
+   INPUTS - Estilo moderno
    ======================================== */
 
 input {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
   transition: all 0.3s ease;
+  border: 2px solid transparent !important;
 }
 
 input:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+  border-color: var(--color-red) !important;
+  box-shadow: 0 0 20px rgba(255, 59, 59, 0.3);
+  outline: none;
 }
 
 /* ========================================
-   CARDS - Efecto glassmorphism
+   CARDS - Estilo limpio
    ======================================== */
 
 div[class*="bg-slate-800"] {
-  backdrop-filter: blur(10px);
-  background: rgba(30, 41, 59, 0.8) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(145deg, #1a1a2e 0%, #16161d 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
 /* ========================================
-   ANIMACIONES PERSONALIZADAS
+   TÍTULOS
    ======================================== */
 
-/* Pulso suave */
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(239, 68, 68, 0.6);
-  }
+h1, h2, h3 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.5px;
 }
 
-/* Flotación suave */
+/* Título principal rojo con glow */
+h1[class*="text-red"] {
+  color: var(--color-red) !important;
+  text-shadow:
+    0 0 10px rgba(255, 59, 59, 0.5),
+    0 0 30px rgba(255, 59, 59, 0.3),
+    0 0 50px rgba(255, 59, 59, 0.2);
+  -webkit-text-fill-color: var(--color-red);
+}
+
+/* ========================================
+   ANIMACIONES
+   ======================================== */
+
+@keyframes pulse-glow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.2); }
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
 }
 
-/* Entrada con fade */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Shake para errores */
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
-}
-
-/* Aplicar animaciones */
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
 }
@@ -184,70 +230,43 @@ div[class*="bg-slate-800"] {
   animation: float 3s ease-in-out infinite;
 }
 
-.animate-fade-in {
-  animation: fadeInUp 0.5s ease-out forwards;
-}
-
-.animate-shake {
-  animation: shake 0.5s ease-in-out;
-}
-
 /* ========================================
-   TEXTOS - Efectos especiales
-   ======================================== */
-
-/* Título con gradiente */
-h1[class*="text-red"] {
-  background: linear-gradient(135deg, #ef4444 0%, #f97316 50%, #ef4444 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradient-shift 3s ease infinite;
-  text-shadow: none;
-}
-
-@keyframes gradient-shift {
-  0%, 100% { background-position: 0% center; }
-  50% { background-position: 100% center; }
-}
-
-/* ========================================
-   SCROLLBAR PERSONALIZADO
+   SCROLLBAR
    ======================================== */
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--bg-dark);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(239, 68, 68, 0.5);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(239, 68, 68, 0.8);
+  background: var(--color-red);
+  border-radius: 3px;
 }
 
 /* ========================================
-   SELECCIÓN DE TEXTO
+   SELECCIÓN
    ======================================== */
 
 ::selection {
-  background: rgba(239, 68, 68, 0.4);
+  background: var(--color-red);
   color: white;
 }
 
 /* ========================================
-   RESPONSIVE TWEAKS
+   TEXTOS GENERALES
    ======================================== */
 
-@media (max-width: 640px) {
-  body::before {
-    opacity: 0.3;
-  }
+p, span, label, div {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Código de sala grande */
+h2[class*="font-mono"] {
+  font-family: 'Outfit', monospace !important;
+  font-weight: 900 !important;
+  letter-spacing: 4px;
 }

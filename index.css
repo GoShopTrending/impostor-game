@@ -1,27 +1,253 @@
-/* Reset básico para asegurar fondo oscuro */
+/* ========================================
+   IMPOSTOR GAME - Estilos Globales
+   ======================================== */
+
+/* Variables y Reset */
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color-scheme: dark;
-  background-color: #0f172a; /* Color slate-900 */
-  color: rgba(255, 255, 255, 0.87);
+  color: rgba(255, 255, 255, 0.95);
+
+  --color-bg: #0f172a;
+  --color-red: #ef4444;
+  --color-blue: #3b82f6;
+  --glow-red: 0 0 40px rgba(239, 68, 68, 0.4);
+  --glow-blue: 0 0 40px rgba(59, 130, 246, 0.4);
 }
 
+* {
+  box-sizing: border-box;
+}
+
+/* Fondo animado con gradiente */
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
   min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(239, 68, 68, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 60%),
+    linear-gradient(180deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+/* Efecto de partículas flotantes (pseudo-elementos) */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.3), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.2), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.4), transparent),
+    radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.2), transparent),
+    radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.3), transparent);
+  background-size: 200px 200px;
+  animation: floatParticles 20s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+@keyframes floatParticles {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-200px); }
 }
 
 #root {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  margin: 0 auto;
+  min-height: 100vh;
 }
 
-/* Animaciones suaves */
+/* ========================================
+   BOTONES - Efectos especiales
+   ======================================== */
+
 button {
-  transition: all 0.2s ease-in-out;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto ripple en botones */
+button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s, height 0.4s;
+}
+
+button:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Glow en hover para botones rojos */
+button[class*="bg-red"]:hover {
+  box-shadow: var(--glow-red);
+  transform: translateY(-2px);
+}
+
+/* Glow en hover para botones azules */
+button[class*="bg-blue"]:hover {
+  box-shadow: var(--glow-blue);
+  transform: translateY(-2px);
+}
+
+/* Glow en hover para botones verdes */
+button[class*="bg-green"]:hover {
+  box-shadow: 0 0 40px rgba(34, 197, 94, 0.4);
+  transform: translateY(-2px);
+}
+
+/* ========================================
+   INPUTS - Estilo mejorado
+   ======================================== */
+
+input {
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+}
+
+/* ========================================
+   CARDS - Efecto glassmorphism
+   ======================================== */
+
+div[class*="bg-slate-800"] {
+  backdrop-filter: blur(10px);
+  background: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================
+   ANIMACIONES PERSONALIZADAS
+   ======================================== */
+
+/* Pulso suave */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(239, 68, 68, 0.6);
+  }
+}
+
+/* Flotación suave */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Entrada con fade */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Shake para errores */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Aplicar animaciones */
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* ========================================
+   TEXTOS - Efectos especiales
+   ======================================== */
+
+/* Título con gradiente */
+h1[class*="text-red"] {
+  background: linear-gradient(135deg, #ef4444 0%, #f97316 50%, #ef4444 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease infinite;
+  text-shadow: none;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+}
+
+/* ========================================
+   SCROLLBAR PERSONALIZADO
+   ======================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(239, 68, 68, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(239, 68, 68, 0.8);
+}
+
+/* ========================================
+   SELECCIÓN DE TEXTO
+   ======================================== */
+
+::selection {
+  background: rgba(239, 68, 68, 0.4);
+  color: white;
+}
+
+/* ========================================
+   RESPONSIVE TWEAKS
+   ======================================== */
+
+@media (max-width: 640px) {
+  body::before {
+    opacity: 0.3;
+  }
 }
